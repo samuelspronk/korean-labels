@@ -9,6 +9,7 @@
     padding: 24px;
     background: #fafafa;
   }
+
   .card {
     max-width: 480px;
     margin: 40px auto;
@@ -18,9 +19,33 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     text-align: center;
   }
-  .en { font-size: 2rem; font-weight: 700; margin-bottom: .5rem; }
-  .roman, .phon { font-size: 1.2rem; color: #333; margin: .2rem 0; }
-  .hangul { font-size: 2.4rem; font-weight: 700; margin-top: 1rem; color: #222; }
+
+  img.logo {
+    width: 140px;
+    max-width: 60%;
+    height: auto;
+    margin-bottom: 16px;
+  }
+
+  .en {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: .5rem;
+  }
+
+  .roman, .phon {
+    font-size: 1.2rem;
+    color: #333;
+    margin: .2rem 0;
+  }
+
+  .hangul {
+    font-size: 2.4rem;
+    font-weight: 700;
+    margin-top: 1rem;
+    color: #222;
+  }
+
   button {
     margin-top: 1.5rem;
     font-size: 1.2rem;
@@ -30,15 +55,19 @@
     background: white;
     cursor: pointer;
   }
+
   button:hover { background: #eee; }
 </style>
 
 <body>
   <div class="card">
+    <img src="logo.png" alt="Logo" class="logo">
+
     <div class="en" id="en"></div>
     <div class="roman" id="roman"></div>
     <div class="phon" id="phon"></div>
     <div class="hangul" id="han"></div>
+
     <button id="play">▶️ Play</button>
     <audio id="audio" preload="none" crossorigin="anonymous"></audio>
   </div>
