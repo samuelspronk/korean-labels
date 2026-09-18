@@ -10,75 +10,81 @@
 <style>
   :root { color-scheme: light; }
   * { box-sizing: border-box; }
-  html,body { margin:0; height:100%; }
+  html,body { margin:0; min-height:100%; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: linear-gradient(160deg,#ffd9ec 0%,#ffe9c7 55%,#fff4d6 100%);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background:linear-gradient(165deg,#ffdcec 0%,#ffe7cf 55%,#fff5dc 100%);
     color:#7a2e57; display:flex; align-items:center; justify-content:center;
-    min-height:100dvh; padding:24px; text-align:center;
+    min-height:100dvh; padding:22px; text-align:center;
   }
   .card {
-    background: rgba(255,255,255,.72); backdrop-filter: blur(6px);
-    border-radius:28px; padding:34px 26px 40px; max-width:420px; width:100%;
-    box-shadow:0 18px 50px rgba(200,90,150,.28);
+    background:rgba(255,255,255,.78); backdrop-filter:blur(6px);
+    border-radius:30px; padding:22px 20px 30px; max-width:380px; width:100%;
+    box-shadow:0 20px 55px rgba(200,90,150,.30);
   }
-  h1 { font-family:"Fredoka", sans-serif; font-weight:700; font-size:1.9rem; margin:.2rem 0 .1rem; }
-  button.play, .name { font-family:"Fredoka", sans-serif; }
-  .sub { font-size:1rem; opacity:.75; margin:0 0 22px; }
-  .balloons { font-size:2.4rem; letter-spacing:.2rem; margin-bottom:6px; }
-  button.play {
-    border:none; cursor:pointer; width:150px; height:150px; border-radius:50%;
+  h1 { font-family:"Fredoka",sans-serif; font-weight:700; font-size:1.85rem;
+       line-height:1.15; margin:.55rem 0 .15rem; }
+  .sub { font-size:1rem; opacity:.75; margin:0 0 18px; }
+  .name { font-family:"Fredoka",sans-serif; font-weight:600; }
+
+  /* photo with play overlay */
+  .photo {
+    position:relative; width:100%; aspect-ratio:3/4; border-radius:22px;
+    overflow:hidden; cursor:pointer; box-shadow:0 10px 26px rgba(122,46,87,.28);
+    border:4px solid #fff;
+  }
+  .photo img { width:100%; height:100%; object-fit:cover; display:block;
+               filter:grayscale(1) contrast(1.02); }
+  .photo::after { /* soft darken at bottom so the button pops */
+    content:""; position:absolute; inset:0;
+    background:linear-gradient(to bottom,rgba(0,0,0,0) 55%,rgba(0,0,0,.28) 100%);
+    pointer-events:none;
+  }
+  .play {
+    position:absolute; left:50%; bottom:16px; transform:translateX(-50%);
+    width:76px; height:76px; border-radius:50%; border:none; cursor:pointer;
     background:radial-gradient(circle at 35% 30%,#ff8fc4,#e75fa0); color:#fff;
-    box-shadow:0 12px 30px rgba(231,95,160,.5); font-size:1rem; font-weight:600;
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    gap:8px; margin:6px auto 4px; transition:transform .12s ease;
+    box-shadow:0 8px 22px rgba(231,95,160,.6); display:flex; align-items:center;
+    justify-content:center; transition:transform .12s ease;
   }
-  button.play:active { transform:scale(.94); }
-  .tri { font-size:2.6rem; line-height:1; margin-bottom:2px; }
-  .hint { font-size:.9rem; opacity:.65; margin-top:18px; min-height:1.2em; }
-  audio { width:100%; margin-top:20px; }
-  .name { font-weight:700; }
+  .play:active { transform:translateX(-50%) scale(.92); }
+  .play .tri { font-size:1.9rem; line-height:1; margin-left:4px; }
+  .play.playing .tri { margin-left:0; }
+  .balloons { font-size:1.7rem; letter-spacing:.25rem; }
+  .hint { font-size:.9rem; opacity:.65; margin-top:14px; min-height:1.2em; }
+  audio { display:none; }
 </style>
 </head>
 <body>
   <div class="card">
     <div class="balloons">🎈🎂🎈</div>
-    <h1>Happy 40th, Mummy!</h1>
+
+    <div class="photo" id="photo" role="button" aria-label="Play Goldie's message">
+      <img src="goldie.jpg" alt="Goldie">
+      <button class="play" id="btn" aria-label="Play">
+        <span class="tri" id="tri">▶</span>
+      </button>
+    </div>
+
+    <h1>Happy Birthday Mummy!</h1>
     <p class="sub">A little message from <span class="name">Goldie</span> 💛</p>
-
-    <button class="play" id="btn" aria-label="Play message">
-      <span class="tri" id="icon">▶</span>
-      <span id="label">Tap to play</span>
-    </button>
-
-    <div class="hint" id="hint">turn your sound up 🔊</div>
+    <div class="hint" id="hint">tap the photo &middot; sound up 🔊</div>
 
     <audio id="a" preload="auto" playsinline src="goldie_only.m4a"></audio>
   </div>
 
 <script>
-  const a = document.getElementById('a');
-  const btn = document.getElementById('btn');
-  const icon = document.getElementById('icon');
-  const label = document.getElementById('label');
-  const hint = document.getElementById('hint');
-
-  function setPlaying(p){
-    icon.textContent = p ? '❚❚' : '▶';
-    label.textContent = p ? 'Playing…' : 'Tap to play';
-  }
-  btn.addEventListener('click', () => {
-    if (a.paused) { a.play(); } else { a.pause(); }
-  });
-  a.addEventListener('play',  () => setPlaying(true));
-  a.addEventListener('pause', () => setPlaying(false));
-  a.addEventListener('ended', () => { setPlaying(false); hint.textContent = 'Play it again 💫'; });
-
-  // Try to autoplay on open; browsers usually need a tap, so the button is the fallback.
-  window.addEventListener('load', () => {
-    const p = a.play();
-    if (p && p.catch) p.catch(() => { hint.textContent = 'tap the button, sound up 🔊'; });
-  });
+  const a=document.getElementById('a'), btn=document.getElementById('btn'),
+        photo=document.getElementById('photo'), tri=document.getElementById('tri'),
+        hint=document.getElementById('hint');
+  function set(p){ tri.textContent=p?'❚❚':'▶'; btn.classList.toggle('playing',p); }
+  function toggle(){ a.paused ? a.play() : a.pause(); }
+  photo.addEventListener('click', toggle);
+  a.addEventListener('play', ()=>{ set(true); hint.textContent='playing… 💫'; });
+  a.addEventListener('pause',()=>set(false));
+  a.addEventListener('ended',()=>{ set(false); hint.textContent='tap to play again 💛'; });
+  window.addEventListener('load', ()=>{ const p=a.play();
+    if(p&&p.catch) p.catch(()=>{ hint.textContent='tap the photo · sound up 🔊'; }); });
 </script>
 </body>
 </html>
