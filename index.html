@@ -57,8 +57,6 @@
 </head>
 <body>
   <div class="card">
-    <div class="balloons">🎈🎂🎈</div>
-
     <div class="photo" id="photo" role="button" aria-label="Play Goldie's message">
       <img src="goldie.jpg" alt="Goldie">
       <button class="play" id="btn" aria-label="Play">
@@ -67,24 +65,20 @@
     </div>
 
     <h1>Happy Birthday Mummy!</h1>
-    <p class="sub">A little message from <span class="name">Goldie</span> 💛</p>
-    <div class="hint" id="hint">tap the photo &middot; sound up 🔊</div>
 
     <audio id="a" preload="auto" playsinline src="goldie_only.m4a"></audio>
   </div>
 
 <script>
   const a=document.getElementById('a'), btn=document.getElementById('btn'),
-        photo=document.getElementById('photo'), tri=document.getElementById('tri'),
-        hint=document.getElementById('hint');
+        photo=document.getElementById('photo'), tri=document.getElementById('tri');
   function set(p){ tri.textContent=p?'❚❚':'▶'; btn.classList.toggle('playing',p); }
   function toggle(){ a.paused ? a.play() : a.pause(); }
   photo.addEventListener('click', toggle);
-  a.addEventListener('play', ()=>{ set(true); hint.textContent='playing… 💫'; });
+  a.addEventListener('play', ()=>set(true));
   a.addEventListener('pause',()=>set(false));
-  a.addEventListener('ended',()=>{ set(false); hint.textContent='tap to play again 💛'; });
-  window.addEventListener('load', ()=>{ const p=a.play();
-    if(p&&p.catch) p.catch(()=>{ hint.textContent='tap the photo · sound up 🔊'; }); });
+  a.addEventListener('ended',()=>set(false));
+  window.addEventListener('load', ()=>{ const p=a.play(); if(p&&p.catch) p.catch(()=>{}); });
 </script>
 </body>
 </html>
